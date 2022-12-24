@@ -1,0 +1,49 @@
+// step2: Import all state functions
+import React, {useState} from 'react';
+import{
+    Row,
+    Col,
+    Toast,
+    ToastBody,
+    ToastHeader,
+    ToastContainer,
+} from "react-bootstrap";
+
+const DisplayMessage = ({errortext, errorFunc}) => {
+
+    // step1: Copy the toast - autohide here from https://react-bootstrap.github.io/components/toasts/
+    const [show, setShow] = useState(true);
+
+//Step3: Add the ToastContiner tag (both start and end) <ToastContainer position="bottom-end">    
+//Step4: New addition:  takeout . (from Toast.Header and Toast.Body) and make it ToastHeader, ToastBody
+//Step5: delete the button code at end inside retrun()  
+//Step7: onclose define the function inside return onClose={() => { setShow(false); errorFunc(""); }}  
+//Step8: Add bg="danger" in Toast
+//step9: Takeout "Bootstrap" in <strong > tag and put it as "Error Information'
+//Step10: Update <ToastBody>{errortext}</ToastBody>>
+
+
+  return (
+    <Row>
+      <Col xs={6}>
+        <ToastContainer position="bottom-end">
+        <Toast onClose={() => {setShow(false); errorFunc("")}} show={show} delay={3000} autohide  bg="danger">
+          <ToastHeader>
+            <img
+              src="holder.js/20x20?text=%20"
+              className="rounded me-2"
+              alt=""
+            />
+            <strong className="me-auto">Error Information</strong>
+            <small>11 mins ago</small>
+          </ToastHeader>
+          <ToastBody>{errortext}</ToastBody>
+        </Toast>
+        </ToastContainer>
+      </Col>
+      
+    </Row>
+  )
+}
+
+export default DisplayMessage
