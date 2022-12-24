@@ -1,0 +1,26 @@
+import React from 'react'
+
+//Step1: Import AuthContext, useNavigate, useContext, useEffect  
+import { AuthContext } from '../Context/Auth';
+import { useNavigate } from "react-router-dom";
+import { useContext, useEffect } from "react";
+
+const Orgs = () => {
+  // Step2: Now check islogin status and if it is true then only navigate to Dashboard
+let navigate = useNavigate();
+const { isLogin, setIsLogin } = useContext(AuthContext);
+
+useEffect(() => {
+  if (!isLogin) {
+    setIsLogin(false);
+    navigate("/", { replace: true });
+  }
+}, []);
+  return (
+    isLogin && (
+    <div>Orgs</div>
+    )
+  )
+}
+
+export default Orgs
