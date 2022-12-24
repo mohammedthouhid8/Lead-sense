@@ -1,0 +1,220 @@
+//import React from 'react'
+//step9c: Import { usestate} from react
+//s23: Import useContext,authContext(we hv defined), and useEffect here
+
+import { useState, useEffect, useContext} from "react";
+
+import { AuthContext } from "../Context/Auth";
+
+//step14b: Importing  the displayMessage
+import DisplayMessage from "../Components/DisplayMessage";
+//s26: NAVIGATE TO HOMEPAGE (Dashboard.jsx),for this import useNavigate
+import { useNavigate } from "react-router-dom";
+
+//s-user: Import Axious and declare baseURL
+import axios from "axios";
+const baseURL = "http://localhost:3000";
+
+
+
+//step1: start designing the login page(container,card,form) and in return() and  run the code to see empty contaier
+//Step1: Start designing the login page (container, card, form) in return() and run the code to see empty container
+//Step1: Start designing the login page (contairer, card, form) in return() and run the code to see empty container
+//Step2: Copy the logo_login.jpg to public folder and then add the left-side
+//Step3: Add the right side
+//Step4: Add the register
+//Step5: Add the title
+//Step6: Add the form tag only
+//step8a: Add the input (explain ternary operator class on variable set)
+//step8b: Add the second input,warnpass
+//step11:Add the button end of return()
+
+
+
+const Login = () => {
+  //s27 create a navigate object using use''''navigate hook
+  let navigate = useNavigate();
+  //step9: Define the sate variables(at top don't copy navigate)
+  //step9a :create a state for storing input filed values (js objects) and set the value 
+  const [inputs, setinputs] = useState({
+    email: "",
+    password: "",
+  });
+//Step9b: Defining variables for maintaining state to dynamically apply various class names
+const [warnemail, setwarnemail] = useState(false);
+const [warnpass, setwarnpass] = useState(false);
+const [danger, setdanger] = useState(false);
+//s13:Adding showError state
+const [showError, setshowError] = useState(false)
+
+//Step24: Get the auth functions from the global context state
+//s2-user:Declaring settoekn to existing setIsLogin
+const { setIsLogin, settoken } = useContext(AuthContext);
+
+//Step25, use useEffect to set the setIsLogin (false)
+useEffect(() => {
+  setIsLogin(false);
+}, [setIsLogin]);
+
+//step10: Define Inputevents and setinput
+const inputEvent = (event) => {
+  const name = event.target.name;
+  const value = event.target.value;
+//step10a: === means strict operator, compares data & datatype. the name variable should have 
+    //i) email and  ii)the object type should be of string (we are doing a string comaprison)
+ if (name === "email") {
+  if (value.length > 0) {
+    setdanger(false)            //styling or disply msg
+  }
+ }
+
+ //step10b: ...  means spread operator, allows us to quickly copy all or part of an existing array 
+ //or object into another array or object.
+ setinputs((lastValue) => {             //spread operator it makes new copy of array
+  return {
+    ...lastValue,
+    [name]: value,
+  };
+});
+
+}
+
+//s2-user: put the validateUser  function here
+const validateUser = async (email,password) => {
+  axios      //connects to db
+  .post(`${baseURL}/users/login`,{            //url:http:localhost:3000
+    email:email,
+    password: password,
+  })
+  .then((response) => {
+    settoken(response.data.token);
+    //console.log(response.data.token);
+    setIsLogin(true);
+    navigate("../dashboard", { replace: true });
+  })
+  .catch((err) => {
+    setshowError("Login Failed!")
+  });
+};
+
+
+//step7: create the submitform method else.preventDefault
+const submitForm = (e) => {
+  e.preventDefault();
+  //Step12: Initialize your state of validations 
+  setwarnemail(false);
+  setwarnpass(false);
+  setdanger(false);
+ 
+  //Step12a: Validate if the email id is entered or not
+  if (inputs.email.length < 1) {
+    setdanger(true); 
+  }   
+  //step12b: if the email and password are blank set the variables and apply
+  if (inputs.email === "") {
+    setwarnemail(true);
+    setshowError("Please enter valid email");
+
+  } else if (inputs.password === "") {
+    setwarnpass(true);
+    setshowError("Please enter valid password");
+
+  } else {
+    //s3-user:comment all the below lines and just call validateUser
+    validateUser(inputs.email, inputs.password);
+      // console.log("Login successful");
+      // //s26a:setting is login to true
+      // setIsLogin(true)
+      // //step27a: navigate to dashboard / home  by setting the route ../dashboard to true
+      //   //TEST THE CODE
+      //   navigate("../dashboard", { replace: true });
+  }
+
+}
+
+//s14A:now create a component called DisplayMessage.jsx(react-bootstrap components,"toast-autohide")
+//s14c: now call display message in return() just below <>tag
+//s15: now conditionally render <DisplayMessage
+//step16: Now we need to build logic for Login and protect all the routes so that when user come to the app, he will 
+  //only see the login page and upon login only will see the sidebar page along with the various components / routes
+  //Now let us use useContext Hook and it is used to store global variable primarily across components (to avoid prop
+  //drilling) we use   useContext. Define useContext one time and forget it
+  //STEP17: Create folder Context inside src folder and create Auth.jsx
+
+   
+  //Step-user5: Add the class login to the conatiner <div className="container login">
+  //Step-user6: add Rocovery Password section, <div className="recovery">  : 
+  //Step-user7: TEST it and show the console.log for token
+
+
+
+  return (
+    
+    <>
+    {
+        showError && (
+          <DisplayMessage
+            errortext={showError}
+            errorFunc={setshowError}
+          ></DisplayMessage>
+        )
+    }
+    <div className="container login">
+      <div className="card">
+        <div className="form">
+        <div className="left-side">
+        <img src="/logo_login.jpg" alt="login Logo" />
+           
+        </div>
+<div className="right-side">
+  <div className="register">
+    <p></p>
+  </div>
+  <div className="title">
+    <h2>
+      <b>Lead sense</b>
+    </h2>
+    <h4>A Complete Lead Management Application</h4>
+
+  </div>
+  <form onSubmit={submitForm}>
+  <div className="input_text">
+                    <input
+                      className={` ${warnemail ? "warning" : ""}`}
+                      type="text"
+                      placeholder="Enter Email"
+                      name="email"
+                      value={inputs.email}
+                      onChange={inputEvent}
+                    />
+                </div>
+
+
+  
+  <div className="input_text">
+                    <input
+                      className={` ${warnpass ? "warning" : ""}`}
+                      type="password"
+                      placeholder="Enter password"
+                      name="password"
+                      value={inputs.password}
+                      onChange={inputEvent}
+                    />
+                </div>
+                <div className="recovery">
+                  <p>Recovery password</p>
+                </div>
+                <div className="bt">
+                  <button type="submit">Sign in</button>
+                </div>
+                </form>
+
+</div>
+        </div>
+      </div>
+    </div>
+    </>
+  )
+}
+
+export default Login
