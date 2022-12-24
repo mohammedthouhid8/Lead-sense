@@ -1,0 +1,51 @@
+const express = require("express");
+//adding router package//
+const router = express.Router();
+const {protect} = require("../middleware/authService");
+//Importing the todo controller functions//
+const { 
+    registerUser,
+    loginUser,
+    getLoggedInUser,
+    getUsers,
+    getUserById,
+    updateUser,
+    deleteUser,
+} = require("../controller/user.controller");
+
+// Define all the  Routesfor controller functions
+// 1. Register user route
+router.route("/").post(function (req, res) {
+    registerUser(req, res);
+});
+
+// 2. Login user route
+router.route("/login").post(function (req, res) {
+    loginUser(req, res);
+});
+
+// 3. Get Logged in User route - protect
+router.get("/loggedinuser", protect, getLoggedInUser);
+
+// 4. get all the users
+router.route("/").get(async (req, res) => {
+    await getUsers(req, res);
+});
+
+// 5. get user by id
+router.route("/:id").get(async (req, res) => {
+    await getUserById(req, res);
+});
+
+// 6. update user
+router.route("/:id").put(async (req, res) => {
+    await updateUser(req, res);
+});
+
+// 7. delete user
+router.route("/:id").delete(async (req, res) => {
+    await deleteUser(req, res);
+});
+
+// Exporting the router
+module.exports = router;
